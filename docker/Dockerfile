@@ -8,7 +8,7 @@ RUN sed -i "s|listen = 9000|listen = /var/run/php/fpm.sock\nlisten.mode = 0666|"
 # Use the default production configuration
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-COPY docker/php/conf.d/default.conf $PHP_INI_DIR/conf.d/default.ini
+COPY docker/php/conf.d/default.ini $PHP_INI_DIR/conf.d/default.ini
 
 # Install dependencies
 RUN set -xe \
