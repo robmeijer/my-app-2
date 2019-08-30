@@ -48,6 +48,6 @@ RUN bin/console assets:install
 
 FROM nginx:1.17-alpine AS web
 
-COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY docker/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
 
 COPY --from=app /var/www/public /var/www/public
