@@ -7,8 +7,6 @@ services:
             context: .
             dockerfile: ./docker/Dockerfile
             target: app
-        volumes:
-            - phpsocket:/var/run/php
 
     web:
         image: symfony-web:local
@@ -18,10 +16,5 @@ services:
             target: web
         ports:
             - 8000:80
-        volumes:
-            - phpsocket:/var/run/php
         depends_on:
             - app
-
-volumes:
-    phpsocket:
