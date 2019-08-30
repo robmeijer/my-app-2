@@ -1,0 +1,27 @@
+version: "3.7"
+
+services:
+    app:
+        image: symfony-app:local
+        build:
+            context: .
+            dockerfile: ./docker/Dockerfile
+            target: app
+        volumes:
+            - phpsocket:/var/run/php
+
+    web:
+        image: symfony-web:local
+        build:
+            context: .
+            dockerfile: ./docker/Dockerfile
+            target: web
+        ports:
+            - 8000:80
+        volumes:
+            - phpsocket:/var/run/php
+        depends_on:
+            - app
+
+volumes:
+    phpsocket:
