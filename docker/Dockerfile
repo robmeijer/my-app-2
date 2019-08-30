@@ -32,7 +32,7 @@ COPY . /var/www
 
 RUN composer dump-autoload --classmap-authoritative
 
-FROM base
+FROM base AS app
 
 ARG APP_ENV=prod
 ARG APP_DEBUG=0
@@ -45,3 +45,9 @@ COPY --from=composer /var/www/ /var/www/
 # Memory limit increase is required by the dev image
 RUN php -d memory_limit=256M bin/console cache:clear
 RUN bin/console assets:install
+
+FROM nginx:1.17-alpine AS web
+
+COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+
+COPY --from=app /var/www/public /var/www/public
