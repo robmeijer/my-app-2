@@ -11,7 +11,8 @@ RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 # Install dependencies
 RUN set -xe \
     && apk add --no-cache bash icu-dev \
-    && docker-php-ext-install pdo pdo_mysql intl pcntl
+    && docker-php-ext-install pdo pdo_mysql intl pcntl \
+    && docker-php-ext-enable opcache
 
 CMD ["php-fpm"]
 
