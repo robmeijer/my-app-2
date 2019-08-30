@@ -12,7 +12,7 @@ COPY docker/php/conf.d/default.ini $PHP_INI_DIR/conf.d/default.ini
 
 # Install dependencies
 RUN set -xe \
-    && apk add --no-cache bash icu-dev \
+    && apk add --no-cache icu-dev \
     && docker-php-ext-install pdo pdo_mysql intl pcntl \
     && docker-php-ext-enable opcache
 
