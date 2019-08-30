@@ -4,16 +4,19 @@ services:
     app:
         image: symfony-app:local
         build:
+            args:
+                APP_ENV: "dev"
+                APP_DEBUG: "1"
             context: .
             dockerfile: ./docker/Dockerfile
-            target: app
 
     web:
         image: symfony-web:local
         build:
+            args:
+                ASSETS_IMAGE: "symfony-app:local"
             context: .
-            dockerfile: ./docker/Dockerfile
-            target: web
+            dockerfile: ./docker/nginx/Dockerfile
         ports:
             - 8000:80
         depends_on:

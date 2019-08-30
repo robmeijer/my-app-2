@@ -1,21 +1,14 @@
-FROM php:7.3-fpm-alpine as base
-
-# Use the default production configuration
-RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-
-COPY docker/php/conf.d/default.ini $PHP_INI_DIR/conf.d/default.ini
-
-# Install dependencies
-RUN set -xe \
-    && apk add --no-cache icu-dev \
-    && docker-php-ext-install pdo pdo_mysql intl pcntl \
-    && docker-php-ext-enable opcache
-
-CMD ["php-fpm"]
+ARG PHP_IMAGE=robmeijer/php:7.3-fpm-alpine
 
 FROM composer:1.9 as composer
 
 RUN rm -rf /var/www && mkdir /var/www
+
+ENV COMPOSER_ALLOW_SUPERUSER=1
+RUN set -eux; \
+	composer global require "symfony/flex" --prefer-dist --no-progress --no-suggest --classmap-authoritative
+ENV PATH="${PATH}:/root/.composer/vendor/bin"
+
 WORKDIR /var/www
 
 COPY composer.* /var/www/
@@ -30,7 +23,7 @@ COPY . /var/www
 
 RUN composer dump-autoload --classmap-authoritative
 
-FROM base AS app
+FROM ${PHP_IMAGE}
 
 ARG APP_ENV=prod
 ARG APP_DEBUG=0
@@ -45,9 +38,3 @@ COPY --from=composer /var/www/ /var/www/
 # Memory limit increase is required by the dev image
 RUN php -d memory_limit=256M bin/console cache:clear
 RUN bin/console assets:install
-
-FROM nginx:1.17-alpine AS web
-
-COPY docker/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
-
-COPY --from=app /var/www/public /var/www/public
