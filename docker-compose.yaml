@@ -7,8 +7,11 @@ services:
             args:
                 APP_ENV: "dev"
                 APP_DEBUG: "1"
+                PHP_IMAGE: "symfony-php:local"
             context: .
             dockerfile: ./docker/Dockerfile
+        volumes:
+          - .:/var/www:rw,cached
 
     web:
         image: symfony-web:local
@@ -21,3 +24,5 @@ services:
             - 8000:80
         depends_on:
             - app
+        volumes:
+          - ./public:/var/www/public:ro,delegated

@@ -6,8 +6,7 @@ RUN rm -rf /var/www && mkdir /var/www
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN set -eux; \
-	composer global require "symfony/flex" --prefer-dist --no-progress --no-suggest --classmap-authoritative
-ENV PATH="${PATH}:/root/.composer/vendor/bin"
+	composer global require hirak/prestissimo --prefer-dist --no-progress --no-suggest --no-plugins --no-scripts --classmap-authoritative
 
 WORKDIR /var/www
 
@@ -34,7 +33,14 @@ ENV APP_DEBUG $APP_DEBUG
 WORKDIR /var/www
 
 COPY --from=composer /var/www/ /var/www/
+COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 # Memory limit increase is required by the dev image
 RUN php -d memory_limit=256M bin/console cache:clear
 RUN bin/console assets:install
+
+COPY docker/php/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
+RUN chmod +x /usr/local/bin/docker-entrypoint
+
+ENTRYPOINT ["docker-entrypoint"]
+CMD ["php-fpm"]
