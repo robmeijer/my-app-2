@@ -6,7 +6,8 @@ RUN rm -rf /var/www && mkdir /var/www
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN set -eux; \
-	composer global require hirak/prestissimo --prefer-dist --no-progress --no-suggest --no-plugins --no-scripts --classmap-authoritative
+	composer global require hirak/prestissimo --prefer-dist --no-progress --no-suggest --no-plugins --no-scripts --classmap-authoritative; \
+	composer clear-cache
 
 WORKDIR /var/www
 
@@ -16,7 +17,8 @@ ARG APP_ENV=prod
 
 RUN set -xe \
     && if [ "$APP_ENV" = "prod" ]; then export ARGS="--no-dev"; fi \
-    && composer install --prefer-dist --no-scripts --no-progress --no-suggest --no-interaction $ARGS
+    && composer install --prefer-dist --no-scripts --no-progress --no-suggest --no-interaction $ARGS; \
+    composer clear-cache
 
 COPY . /var/www
 
