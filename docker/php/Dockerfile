@@ -1,4 +1,6 @@
-FROM php:7.3-fpm-alpine
+ARG PHP_VERSION=7.3
+
+FROM php:${PHP_VERSION}-fpm-alpine
 
 ARG WITH_MONGODB=false
 
